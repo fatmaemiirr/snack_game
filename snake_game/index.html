@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Fatmaemir</title>
+    </head>
+    <body>
+        <canvas id="GameCanvas" width="400" height="400"> 
+        </canvas> 
+    </body>
+    <script> 
+        var CanvasContext; //oyunun ortamı,boyutu
+        var Canvas; 
+        window.onload=function(){ //pencerem yüklendiğinde olacak şeyleri belirlemek için
+            Canvas=document.getElementById("GameCanvas"); //Id ye göre element seç
+            CanvasContext=Canvas.getContext("2d"); // oyunun boyutunu belirler
+            document.addEventListener("keydown",keyPush); //tuşa basıldığında olay olmasını sağlar
+            setInterval(Game,1000/15); //oyunun kaç saniyede çalışacağını belirler
+
+        }
+        var GameSize = 20; //
+        var xv = yv = 0;  //ilerleme değeri 
+        var px = py = 10; //yılanın şimdiki konumu
+        var ax = ay = 15; //elmanın şimdiki konumu
+        var trail = []; //yılanın büyüklüğüne göre gidilen yol
+        var tail = 5; // yılanın başlangıçtaki uzunluğu
+
+        function Game(){ //Game fonksiyonunu oluşturduk
+            px+=xv; //şimdiki konumunun  üzerine ilerleme değeri ekleme
+            py+=yv; 
+
+            if(px<0) { //yılan sol kenara çarparsa
+            px = GameSize-1;
+            }
+            if(px>GameSize-1){ //yılan sağ kenara çarparsa
+                px=0;
+            }
+            if(py<0){  //yılan yukarı kenara çarparsa
+                py=GameSize-1;
+            }
+            if(py>GameSize-1){ //yılan aşağıya kenara çarparsa
+                py=0;
+        }
+
+        CanvasContext.fillStyle = "green"; //arka plan remklendirme
+        CanvasContext.fillRect(0,0,Canvas.width,Canvas.height); //arka plan şeklini belirleme 
+
+        CanvasContext.fillStyle = "blue"; //yılanın rengini belireme
+        for(var i=0;i<trail.length;i++){ //yılanın yolunu belirler
+            CanvasContext.fillRect(trail[i].x*GameSize,trail[i].y*GameSize,GameSize-2,GameSize-2); //elma yedikçe yılan büyüsün
+           
+            if(trail[i].x==px && trail[i].y==py){ //yılan kendine çarparsa oyun başa döner
+                tail=5; //oyun tekrar başa dönsün
+
+            }
+
+        }
+
+        trail.push({x:px,y:py}); //trial'a değer verdik
+        while(trail.length>tail){ //yılanın uzunluğu ilerliyor
+            trail.shift(); //ilk adımı sil
+        }
+        CanvasContext.fillStyle = "red"; //elmanın rengi
+        CanvasContext.fillRect(ax*GameSize,ay*GameSize,GameSize-2,GameSize-2); //elmanın konumu ve büyüklüğü
+
+        if(ax==px && ay==py){  //elmanın konumu ve yılanın konumu çakışırsa yılan elmayı yer
+            tail++; //yılanın boyutu +1 artar
+            ax=Math.floor(Math.random()*GameSize); //elmayı rastgele bi yere atmak
+            ay=Math.floor(Math.random()*GameSize);
+        }
+        }
+        function keyPush(e){ //tuşlara basma fonksiyonu, kullanılan tuşu alır
+            if(e.keyCode==37){ //sol tuş kodu
+                yv=0;
+
+            }
+            if(e.keyCode==38){ //yukarı tuş kodu
+                xv=0; //x'te oynama yok
+                yv=-1; //yılanın yönünü döndürmek için
+
+            }
+            if(e.keyCode==39){ // sağ tuş kodu
+                xv=1
+                yv=0;
+
+            }
+            if(e.keyCode==40){ //aşağu tuş kodu
+                xv=0;
+                yv=-1;
+
+            }
+        }
+    </script>
+</html>
